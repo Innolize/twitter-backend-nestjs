@@ -1,10 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('post')
 export class PostController {
     @Get()
-    test(): string {
+    getAll(): string {
         return 'Test post controller'
     }
 
+    @Get('/:id')
+    getOne(@Param("id") id: Number): Number {
+        return id
+    }
+
 }
+
