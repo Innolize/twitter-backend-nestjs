@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common';
 import { PostService } from './post.service';
-import { updatePostDTO } from './dto/post.dto'
+import { createPostDTO, updatePostDTO } from './dto/post.dto'
+import { Post as PostInterface } from './interfaces/post.interfaces';
 
 @Controller('post')
 export class PostController {
@@ -12,22 +13,22 @@ export class PostController {
     }
 
     @Get('/:id')
-    async getOne(@Param("id") id: string) {
+    async getOne(@Param("id") id: string): Promise<PostInterface> {
         return await this.postService.findById(id)
     }
 
     @Post('/createPost')
-    async createPost(@Body() body) {
+    async createPost(@Body() body: createPostDTO): Promise<PostInterface> {
         return await this.postService.create(body)
     }
 
     @Put('/:id')
-    async update(@Param('id') id: string, @Body() post: updatePostDTO) {
+    async update(@Param('id') id: string, @Body() post: updatePostDTO): Promise<PostInterface> {
         return this.postService.updatePost(id, post)
     }
 
     @Delete('/:id')
-    async deletePost(@Param('id') id: string){
+    async deletePost(@Param('id') id: string) {
         return this.postService.deletePost(id)
     }
 }
