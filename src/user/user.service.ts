@@ -14,7 +14,7 @@ export class UserService {
     }
 
     getUsers = async (): Promise<UserInterface[]> => {
-        return await this.userModel.find()
+        return await this.userModel.find().select('-password')
     }
 
     delete = async (id: string) => {
@@ -22,12 +22,13 @@ export class UserService {
     }
 
     getUser = async (id: string): Promise<UserInterface> => {
-        const user = await this.userModel.findById(id)
+        const user = await this.userModel.findById(id).select('-password')
         return user
     }
 
-    logIn = async (email: string): Promise<UserInterface> => {
-        const user = await this.userModel.findOne({ "email": email })
+    findOne = async (email: string): Promise<UserInterface> => {        
+        const user = await this.userModel.findOne({ email }).select('+password')
+        console.log("user", user)
         return user
     }
 }

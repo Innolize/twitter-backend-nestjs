@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { loginDTO } from './dto/login.dto';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
-import * as bcrypt from 'bcrypt'
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User as UserDecorator } from './decorators/user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -13,8 +13,10 @@ export class UserController {
         return this.userService.createUser(user)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
-    async getUsers(): Promise<UserInterface[]> {
+    async getUsers(@UserDecorator() user): Promise<UserInterface[]> {
+        console.log(user)
         return await this.userService.getUsers()
     }
 
@@ -30,19 +32,6 @@ export class UserController {
     @Delete('/:id')
     async deleteUser(@Param('id') id: string) {
         return await this.userService.delete(id)
-    }
-
-    @Post('/test')
-    async test(@Body() user: loginDTO) {
-        const foundUser = await this.userService.logIn(user.email)
-        const result = bcrypt.compare(user.password, foundUser.password, function (err, result) {
-            if (err) {
-                console.log('error: ', err)
-            } else {
-                console.log('exito: ', result)
-            }
-        })
-        return result
     }
 
 }
