@@ -28,7 +28,6 @@ export class UserService {
 
     findOne = async (email: string): Promise<UserInterface> => {        
         const user = await this.userModel.findOne({ email }).select('+password')
-        console.log("user", user)
         return user
     }
 }

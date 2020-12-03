@@ -1,5 +1,17 @@
+import { ApiProperty } from "@nestjs/swagger"
+import { IsOptional, IsString } from "class-validator"
+
 export class createUserDTO {
-    profilePicture: string | null
-    email: string
-    password: string
+
+    @ApiProperty()
+    @IsOptional()
+    readonly profilePicture: string | null
+
+    @ApiProperty()
+    @IsString()
+    readonly email: string
+
+    @ApiProperty()
+    @IsString()
+    readonly password: string
 }

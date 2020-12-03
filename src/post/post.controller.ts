@@ -2,7 +2,9 @@ import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common'
 import { PostService } from './post.service';
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { Post as PostInterface } from './interfaces/post.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Posts')
 @Controller('post')
 export class PostController {
     constructor(private postService: PostService) { }

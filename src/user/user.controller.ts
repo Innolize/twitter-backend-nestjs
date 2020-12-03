@@ -3,13 +3,16 @@ import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User as UserDecorator } from './decorators/user.decorator';
+import { ApiTags } from '@nestjs/swagger';
+import { createUserDTO } from './dto/user.dto';
 
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
     @Post()
-    async createUser(@Body() user): Promise<UserInterface> {
+    async createUser(@Body() user : createUserDTO): Promise<UserInterface> {
         return this.userService.createUser(user)
     }
 
