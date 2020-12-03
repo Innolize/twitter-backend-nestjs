@@ -3,6 +3,7 @@ import { PostService } from './post.service';
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { Post as PostInterface } from './interfaces/post.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/common/decorators/auth.decorator';
 
 @ApiTags('Posts')
 @Controller('post')
@@ -19,16 +20,19 @@ export class PostController {
         return await this.postService.findById(id)
     }
 
+    @Auth()
     @Post('/createPost')
     async createPost(@Body() body: createPostDTO): Promise<PostInterface> {
         return await this.postService.create(body)
     }
 
+    @Auth()
     @Put('/:id')
     async update(@Param('id') id: string, @Body() post: updatePostDTO): Promise<PostInterface> {
         return this.postService.updatePost(id, post)
     }
 
+    @Auth()
     @Delete('/:id')
     async deletePost(@Param('id') id: string) {
         return this.postService.deletePost(id)

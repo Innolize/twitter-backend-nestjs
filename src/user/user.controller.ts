@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { User as UserDecorator } from './decorators/user.decorator';
+import { User as UserDecorator } from '../common/decorators/user.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { createUserDTO } from './dto/user.dto';
+import { Auth } from 'src/common/decorators/auth.decorator';
 
 @ApiTags('Users')
 @Controller('user')
@@ -12,11 +12,11 @@ export class UserController {
     constructor(private readonly userService: UserService) { }
 
     @Post()
-    async createUser(@Body() user : createUserDTO): Promise<UserInterface> {
+    async createUser(@Body() user: createUserDTO): Promise<UserInterface> {
         return this.userService.createUser(user)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @Auth()
     @Get()
     async getUsers(@UserDecorator() user): Promise<UserInterface[]> {
         console.log(user)
