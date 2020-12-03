@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User as UserDecorator } from '../common/decorators/user.decorator';
@@ -16,7 +16,7 @@ export class UserController {
         return this.userService.createUser(user)
     }
 
-    @Auth()
+
     @Get()
     async getUsers(@UserDecorator() user): Promise<UserInterface[]> {
         console.log(user)
@@ -32,6 +32,7 @@ export class UserController {
         return selectedUser
     }
 
+    @Auth()
     @Delete('/:id')
     async deleteUser(@Param('id') id: string) {
         return await this.userService.delete(id)

@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import { BadRequestException, Body, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { createUserDTO } from './dto/user.dto';
@@ -9,6 +9,11 @@ export class UserService {
     constructor(@InjectModel("User") private readonly userModel: Model<UserInterface>) { }
 
     createUser = async (user: createUserDTO): Promise<UserInterface> => {
+        const userExist = await this.userModel.findOne({ 'email': user.email })
+        if (userExist) {
+            throw new BadRequestException('User already registered with that email!')
+        }
+
         const newUser = new this.userModel(user)
         return await newUser.save()
     }
@@ -26,7 +31,7 @@ export class UserService {
         return user
     }
 
-    findOne = async (email: string): Promise<UserInterface> => {        
+    findFullUser = async (email: string): Promise<UserInterface> => {
         const user = await this.userModel.findOne({ email }).select('+password')
         return user
     }
