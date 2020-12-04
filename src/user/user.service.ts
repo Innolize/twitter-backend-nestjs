@@ -1,7 +1,6 @@
-import { BadRequestException, Body, Injectable } from '@nestjs/common';
+import { BadRequestException, Body, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { createPostDTO } from 'src/post/dto/post.dto';
 import { editUserDTO } from './dto/editUser.dto';
 import { createUserDTO } from './dto/user.dto';
 import { UserInterface } from './interfaces/user.interface'
@@ -24,11 +23,27 @@ export class UserService {
         return await this.userModel.find().select('-password')
     }
 
-    editUser = async (id: string, user: editUserDTO): Promise<UserInterface> => {
-        return this.userModel.findByIdAndUpdate(id, user, { new: true })
+    editUser = async (id: string, dto: editUserDTO, user?: UserInterface): Promise<UserInterface> => {
+        if (user && id !== user.id) {
+            //Comparo el id del usuario a editar con el usuario logeado antes de buscarlo
+            //en la base de datos, por eso esta la posibilidad de que no exista
+            //el usuario.
+            throw new ForbiddenException('User not found or unauthorized')
+        }
+        const userUpdated = await this.userModel.findByIdAndUpdate({ "_id": id }, dto, { new: true })
+
+
+        return userUpdated
     }
 
-    delete = async (id: string) => {
+    delete = async (id: string, user?:UserInterface) => {
+        if (user && id !== user.id) {
+            //Comparo el id del usuario a editar con el usuario logeado antes de buscarlo
+            //en la base de datos, por eso esta la posibilidad de que no exista
+            //el usuario.
+            throw new ForbiddenException('User not found or unauthorized')
+        }
+
         return await this.userModel.findOneAndDelete({ '_id': id })
     }
 
