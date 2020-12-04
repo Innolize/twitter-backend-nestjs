@@ -4,6 +4,7 @@ import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { Post as PostInterface } from './interfaces/post.interface';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorators/auth.decorator';
+import { AppResourses, AppRole } from 'src/app.roles';
 
 @ApiTags('Posts')
 @Controller('post')
@@ -32,7 +33,11 @@ export class PostController {
         return this.postService.updatePost(id, post)
     }
 
-    @Auth()
+    @Auth({
+        possession: "own",
+        action: "delete",
+        resource: AppResourses.POST
+    })
     @Delete('/:id')
     async deletePost(@Param('id') id: string) {
         return this.postService.deletePost(id)

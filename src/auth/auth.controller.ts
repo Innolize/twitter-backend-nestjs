@@ -1,7 +1,8 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
+import { LogInDTO } from './dto/logIn.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @ApiTags('Auth')
@@ -11,7 +12,9 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('/')
-    logIn(@Req() req: Request) {
+    logIn(
+        @Body() loginDTO: LogInDTO,
+        @Req() req: Request) {
         return this.authService.login(req.user)
     }
 }

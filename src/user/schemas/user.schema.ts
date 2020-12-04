@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HookNextFunction } from 'mongoose'
 import { hash } from 'bcrypt'
 import { UserInterface } from '../interfaces/user.interface'
+import { AppRole, roles } from 'src/app.roles'
 
 @Schema({ timestamps: true })
 export class User {
@@ -19,6 +20,8 @@ export class User {
 
     @Prop({ required: true, select: false })
     password: string
+    @Prop({ required: true, default: [AppRole.AUTHOR] })
+    role: string[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

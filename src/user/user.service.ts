@@ -1,6 +1,8 @@
 import { BadRequestException, Body, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { createPostDTO } from 'src/post/dto/post.dto';
+import { editUserDTO } from './dto/editUser.dto';
 import { createUserDTO } from './dto/user.dto';
 import { UserInterface } from './interfaces/user.interface'
 
@@ -20,6 +22,10 @@ export class UserService {
 
     getUsers = async (): Promise<UserInterface[]> => {
         return await this.userModel.find().select('-password')
+    }
+
+    editUser = async (id: string, user: editUserDTO): Promise<UserInterface> => {
+        return this.userModel.findByIdAndUpdate(id, user, { new: true })
     }
 
     delete = async (id: string) => {

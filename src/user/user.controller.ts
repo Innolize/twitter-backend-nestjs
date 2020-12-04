@@ -1,10 +1,13 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User as UserDecorator } from '../common/decorators/user.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { createUserDTO } from './dto/user.dto';
 import { Auth } from 'src/common/decorators/auth.decorator';
+import { editUserDTO } from './dto/editUser.dto';
+import { ACGuard, UseRoles } from 'nest-access-control';
+import { AppResourses } from 'src/app.roles';
 
 @ApiTags('Users')
 @Controller('user')
@@ -32,7 +35,22 @@ export class UserController {
         return selectedUser
     }
 
-    @Auth()
+    @Auth({
+        possession: "own",
+        action: "update",
+        resource: AppResourses.USER
+    })
+    @Put('/:id')
+    async editUser(@Param('id') id: string, @Body() user: editUserDTO) {
+        
+        return await this.userService.editUser(id, user)
+    }
+
+    @Auth({
+        possession: "own",
+        action: "delete",
+        resource: AppResourses.USER
+    })
     @Delete('/:id')
     async deleteUser(@Param('id') id: string) {
         return await this.userService.delete(id)
