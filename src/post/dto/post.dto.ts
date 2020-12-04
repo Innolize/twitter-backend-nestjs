@@ -5,19 +5,11 @@ export class createPostDTO {
 
     @ApiProperty()
     @IsString()
-    readonly authorId: string
-
-    @ApiProperty()
-    @IsString()
     @MinLength(4)
     readonly message: string
 }
 
 export class updatePostDTO {
-    @ApiProperty()
-    @IsOptional()
-    @IsString()
-    authorId: string
 
     @ApiProperty()
     @IsOptional()
