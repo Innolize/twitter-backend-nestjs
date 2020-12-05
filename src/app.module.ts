@@ -6,6 +6,7 @@ import { PostModule } from './post/post.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { roles } from './app.roles';
+import { CommentModule } from './comment/comment.module';
 
 
 @Module({
@@ -15,6 +16,7 @@ import { roles } from './app.roles';
     AccessControlModule.forRoles(roles),
     PostModule,
     UserModule,
-    AuthModule],
+    AuthModule,
+    CommentModule],
 })
 export class AppModule { }
