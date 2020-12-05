@@ -5,13 +5,21 @@ export class editUserDTO {
 
     @ApiProperty()
     @IsOptional()
+    name: string
+
+    @ApiProperty()
+    @IsOptional()
+    surname: string
+
+    @ApiProperty()
+    @IsOptional()
     profilePicture: string
 
-    @ApiProperty()
-    @IsOptional()
-    email: string
+    // @ApiProperty()
+    // @IsOptional()
+    // email: string
 
-    @ApiProperty()
-    @IsOptional()
-    password: string
+    // @ApiProperty()
+    // @IsOptional()
+    // password: string
 }

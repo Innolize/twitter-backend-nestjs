@@ -1,9 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User } from '../common/decorators/user.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { createUserDTO } from './dto/user.dto';
+import { createUserDTO } from './dto/createUser.dto';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { editUserDTO } from './dto/editUser.dto';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';

@@ -2,7 +2,7 @@ import { BadRequestException, Body, ForbiddenException, Injectable, NotFoundExce
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { editUserDTO } from './dto/editUser.dto';
-import { createUserDTO } from './dto/user.dto';
+import { createUserDTO } from './dto/createUser.dto';
 import { UserInterface } from './interfaces/user.interface'
 
 @Injectable()
