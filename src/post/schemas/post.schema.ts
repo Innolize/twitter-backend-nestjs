@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
 import * as mongoose from 'mongoose'
 import { User } from 'src/user/schemas/user.schema'
 
-@Schema()
+@Schema({ timestamps: true })
 export class Post {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     author: User
