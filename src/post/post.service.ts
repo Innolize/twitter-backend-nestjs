@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Post } from './interfaces/post.interface'
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { UserInterface } from 'src/user/interfaces/user.interface';
+import validateObjectId from 'src/common/utils/objectIdValidator';
 
 @Injectable()
 export class PostService {
@@ -21,6 +22,7 @@ export class PostService {
     }
 
     updatePost = async (id: string, post: updatePostDTO, user?: UserInterface): Promise<Post> => {
+        validateObjectId(id, 'Invalid post id')
         const data = await this.findById(id)
         const postFound = !user ? data : !!data && (data.authorId).toString() === user.id ? data : null
         if (!postFound) {
@@ -31,15 +33,16 @@ export class PostService {
     }
 
     findById = async (id: string) => {
+        validateObjectId(id, 'Invalid post id')
         const respuesta = await this.postModel.findById(id).populate('author', 'profilePicture _id')
+            .orFail(() => new NotFoundException('Post not found'))
         return respuesta
     }
 
     deletePost = async (id: string, user?: UserInterface) => {
+        validateObjectId(id, 'Invalid post id')
         const post = await this.postModel.findById(id)
-        const postFound = !user ? post : !!post && (post.authorId).toString() === user.id ? post : null
-
-        if (!postFound) {
+        if (!post || !(user && (post.authorId).toString() === user.id)) {
             throw new ForbiddenException('Post not found or unauthorized')
         }
         return await this.postModel.deleteOne({ '_id': id })
