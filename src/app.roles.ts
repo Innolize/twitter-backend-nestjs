@@ -7,7 +7,8 @@ export enum AppRole {
 
 export enum AppResourses {
     USER = 'USER',
-    POST = 'POST'
+    POST = 'POST',
+    COMMENT = 'COMMENT'
 }
 
 export const roles: RolesBuilder = new RolesBuilder()
@@ -20,12 +21,15 @@ roles
     .createOwn([AppResourses.POST])
     .updateOwn([AppResourses.POST])
     .deleteOwn([AppResourses.POST])
+    .createOwn([AppResourses.COMMENT])
+    .updateOwn([AppResourses.COMMENT])
+    .deleteOwn([AppResourses.COMMENT])
 
     //ADMIN ROLES
     .grant(AppRole.ADMIN)
     .extend(AppRole.AUTHOR)
     .createAny([AppResourses.USER])
-    .updateAny([AppResourses.USER, AppResourses.POST])
-    .deleteAny([AppResourses.USER, AppResourses.POST])
+    .updateAny([AppResourses.USER, AppResourses.POST, AppResourses.COMMENT])
+    .deleteAny([AppResourses.USER, AppResourses.POST, AppResourses.COMMENT])
 
 

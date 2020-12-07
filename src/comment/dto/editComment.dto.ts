@@ -1,9 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class createCommentDTO {
-
-    @IsString()
-    postId: string
+export class editCommentDTO {
 
     @IsString()
     message: string

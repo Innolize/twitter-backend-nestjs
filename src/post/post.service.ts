@@ -16,13 +16,13 @@ export class PostService {
     }
 
     create = async (post: createPostDTO, user: UserInterface): Promise<Post> => {
-        const newPost = new this.postModel({ ...post, author: user.id })
+        const newPost = new this.postModel({ ...post, authorId: user.id })
         return await newPost.save()
     }
 
     updatePost = async (id: string, post: updatePostDTO, user?: UserInterface): Promise<Post> => {
         const data = await this.findById(id)
-        const postFound = !user ? data : !!data && (data.author).toString() === user.id ? data : null
+        const postFound = !user ? data : !!data && (data.authorId).toString() === user.id ? data : null
         if (!postFound) {
             throw new ForbiddenException('Post not found or unauthorized')
         }
@@ -36,8 +36,8 @@ export class PostService {
     }
 
     deletePost = async (id: string, user?: UserInterface) => {
-        const data = await this.postModel.findById(id)
-        const postFound = !user ? data : !!data && (data.author).toString() === user.id ? data : null
+        const post = await this.postModel.findById(id)
+        const postFound = !user ? post : !!post && (post.authorId).toString() === user.id ? post : null
 
         if (!postFound) {
             throw new ForbiddenException('Post not found or unauthorized')

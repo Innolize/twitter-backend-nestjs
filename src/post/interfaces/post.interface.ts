@@ -1,6 +1,6 @@
 import { Document } from 'mongoose'
 
 export interface Post extends Document {
-    author: string,
+    authorId: string,
     comment: string
 }
