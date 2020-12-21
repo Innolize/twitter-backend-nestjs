@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Res } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User } from '../common/decorators/user.decorator';
@@ -8,6 +8,7 @@ import { Auth } from 'src/common/decorators/auth.decorator';
 import { editUserDTO } from './dto/editUser.dto';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
 import { AppResourses } from 'src/app.roles';
+import { Response } from 'express';
 
 @ApiTags('Users')
 @Controller('user')
@@ -19,14 +20,20 @@ export class UserController {
     ) { }
 
     @Post()
-    async createUser(@Body() user: createUserDTO): Promise<UserInterface> {
-        return this.userService.createUser(user)
+    async createUser(@Body() user: createUserDTO, @Res({ passthrough: true }) res: Response): Promise<UserInterface> {
+        let respuesta: any
+        try {
+            respuesta = await this.userService.createUser(user)
+            res.cookie('access_token', '12345', { httpOnly: true })
+            return respuesta
+        } catch (e) {
+            console.log(e)
+        }
     }
 
 
     @Get()
-    async getUsers(@User() user): Promise<UserInterface[]> {
-        console.log(user)
+    async getUsers(): Promise<UserInterface[]> {
         return await this.userService.getUsers()
     }
 
