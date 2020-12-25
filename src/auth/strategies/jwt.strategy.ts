@@ -7,7 +7,7 @@ import { UserService } from "src/user/user.service";
 
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     constructor(
         private userService: UserService,
         private configService: ConfigService
@@ -15,7 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET')
+            secretOrKey: configService.get<string>('JWT_SECRET'),
+            signOptions: { expiresIn: '9000s' }
         })
     }
     async validate(payload: any) {
