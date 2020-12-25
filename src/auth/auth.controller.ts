@@ -1,4 +1,4 @@
-import { Body, Controller, Header, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Header, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
@@ -27,8 +27,6 @@ export class AuthController {
         } catch (err) {
 
         }
-
-
     }
 
     @Post('/refresh')
@@ -43,7 +41,8 @@ export class AuthController {
             response.cookie('refresh', refresh)
             return { access_token }
         } catch (err) {
-            console.log('error')
+            response.clearCookie('refresh')
+            throw new BadRequestException(err.message)
         }
 
 
