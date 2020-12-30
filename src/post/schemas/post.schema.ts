@@ -5,7 +5,7 @@ import { User } from 'src/user/schemas/user.schema'
 @Schema({ timestamps: true })
 export class Post {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    authorId: User
+    author: User
 
     @Prop({ required: true })
     message: string
