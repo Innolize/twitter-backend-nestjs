@@ -33,7 +33,7 @@ export class PostController {
         action: "create",
         resource: AppResourses.POST
     })
-    @Post('/createPost')
+    @Post('/create')
     async createPost(@Body() dto: createPostDTO, @User() user: UserInterface): Promise<PostInterface> {
         return await this.postService.create(dto, user)
     }

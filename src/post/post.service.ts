@@ -12,19 +12,19 @@ export class PostService {
     constructor(@InjectModel('Post') private readonly postModel: Model<Post>) { }
 
     getAll = async (): Promise<Post[]> => {
-        const data = await this.postModel.find().populate('author', 'profilePicture _id')
+        const data = await this.postModel.find().populate('author', )
         return data
     }
 
     create = async (post: createPostDTO, user: UserInterface): Promise<Post> => {
-        const newPost = new this.postModel({ ...post, authorId: user.id })
+        const newPost = new this.postModel({ ...post, author: user.id })
         return await newPost.save()
     }
 
     updatePost = async (id: string, post: updatePostDTO, user?: UserInterface): Promise<Post> => {
         validateObjectId(id, 'Invalid post id')
         const data = await this.findById(id)
-        const postFound = !user ? data : !!data && (data.authorId).toString() === user.id ? data : null
+        const postFound = !user ? data : !!data && (data.author).toString() === user.id ? data : null
         if (!postFound) {
             throw new ForbiddenException('Post not found or unauthorized')
         }
@@ -42,7 +42,7 @@ export class PostService {
     deletePost = async (id: string, user?: UserInterface) => {
         validateObjectId(id, 'Invalid post id')
         const post = await this.postModel.findById(id)
-        if (!post || !(user && (post.authorId).toString() === user.id)) {
+        if (!post || !(user && (post.author).toString() === user.id)) {
             throw new ForbiddenException('Post not found or unauthorized')
         }
         return await this.postModel.deleteOne({ '_id': id })

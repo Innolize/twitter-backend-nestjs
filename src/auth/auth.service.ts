@@ -44,9 +44,17 @@ export class AuthService {
             const payload = { sub }
             const access_token = this.jwtService.sign(payload)
             const refresh = this.jwtService.sign(payload, { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: this.configService.get<string>('JWT_REFRESH_SECRET_EXPIRE') })
-            return { access_token, refresh }
+            const user = await this.userService.getUser(sub)
+            return {
+                access_token,
+                refresh,
+                user,
+            }
         } catch (error) {
-            throw new Error(error.message)
+            return {
+                logged: false,
+                message: error.message
+            }
         }
     }
 }
