@@ -35,6 +35,7 @@ export class PostController {
     })
     @Post('/create')
     async createPost(@Body() dto: createPostDTO, @User() user: UserInterface): Promise<PostInterface> {
+        console.log(user)
         return await this.postService.create(dto, user)
     }
 
