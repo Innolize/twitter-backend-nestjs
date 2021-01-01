@@ -16,8 +16,8 @@ export class CommentService {
         private readonly postModel: Model<Post>
     ) { }
 
-    allComments = async () => {
-        return await this.commentModel.find().populate('post')
+    allComments = async (postId: string) => {
+        return await this.commentModel.find({ postId }).populate('post').sort("asc")
     }
 
     getSingleComment = async (commentId: string) => {

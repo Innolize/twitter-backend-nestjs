@@ -5,6 +5,7 @@ import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import { CommentService } from './comment.service';
+import { findByPostDTO } from './dto/commentPost.dto';
 import { createCommentDTO as CreateDTO } from './dto/createComment.dto'
 import { editCommentDTO } from './dto/editComment.dto'
 
@@ -16,9 +17,9 @@ export class CommentController {
         private readonly rolesbuilder: RolesBuilder
     ) { }
 
-    @Get()
-    async allComments() {
-        const results = await this.commentService.allComments()
+    @Get('/post/:id')
+    async commentsByPost(@Param('id') postId: string) {
+        const results = await this.commentService.allComments(postId)
         return results
     }
 

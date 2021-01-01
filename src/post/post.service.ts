@@ -12,7 +12,7 @@ export class PostService {
     constructor(@InjectModel('Post') private readonly postModel: Model<Post>) { }
 
     getAll = async (): Promise<Post[]> => {
-        const data = await this.postModel.find().populate('author', )
+        const data = await this.postModel.find().populate('author').sort({createdAt: 'desc'})
         return data
     }
 
@@ -34,7 +34,7 @@ export class PostService {
 
     findById = async (id: string) => {
         validateObjectId(id, 'Invalid post id')
-        const respuesta = await this.postModel.findById(id).populate('author', 'profilePicture _id')
+        const respuesta = await this.postModel.findById(id).populate('author', 'profilePicture _id name surname')
             .orFail(() => new NotFoundException('Post not found'))
         return respuesta
     }
