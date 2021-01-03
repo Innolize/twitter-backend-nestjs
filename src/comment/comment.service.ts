@@ -17,7 +17,9 @@ export class CommentService {
     ) { }
 
     allComments = async (postId: string) => {
-        return await this.commentModel.find({ postId }).populate('post').sort("asc")
+        const response = await this.commentModel.find({ postId }).populate('post').sort("asc")
+        console.log(response)
+        return response
     }
 
     getSingleComment = async (commentId: string) => {
