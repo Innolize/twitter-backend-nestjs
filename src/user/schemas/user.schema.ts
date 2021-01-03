@@ -6,11 +6,11 @@ import { AppRole, roles } from 'src/app.roles'
 
 @Schema({ timestamps: true })
 export class User {
-    // @Prop({ required: true })
-    // name: string
+    @Prop({ required: true })
+    name: string
 
-    // @Prop()
-    // surname: string
+    @Prop({ required: true })
+    surname: string
 
     @Prop({ default: null })
     profilePicture: string
@@ -20,6 +20,7 @@ export class User {
 
     @Prop({ required: true, select: false })
     password: string
+    
     @Prop({ required: true, default: [AppRole.AUTHOR] })
     roles: string[]
 }
