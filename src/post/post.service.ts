@@ -35,13 +35,18 @@ export class PostService {
 
     findById = async (id: string) => {
         validateObjectId(id, 'Invalid post id')
-        const respuesta = await this.postModel.findById(id).populate('author', 'profilePicture _id name surname')
+        const respuesta = await this.postModel.findById(id)
+            .populate('author', 'profilePicture _id name surname')
+
             .orFail(() => new NotFoundException('Post not found'))
         return respuesta
     }
 
     findByAuthorId = async (authorId: string) => {
-        const respuesta = await this.postModel.find({ author: authorId }).sort({ createdAt: 'desc' })
+        const respuesta = await this.postModel.find({ author: authorId })
+            .populate('author', 'profilePicture _id name surname')
+            .sort({ createdAt: 'desc' })
+
             .orFail(() => new NotFoundException('No posts'))
         return respuesta
     }
