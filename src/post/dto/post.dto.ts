@@ -17,3 +17,10 @@ export class updatePostDTO {
     @MinLength(4)
     message: string
 }
+
+export class userPostsDTO {
+
+    @ApiProperty()
+    @IsString()
+    userId: string
+}

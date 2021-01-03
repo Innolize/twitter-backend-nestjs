@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Put, Delete, NotFoundException } from '@nestjs/common';
 import { PostService } from './post.service';
-import { createPostDTO, updatePostDTO } from './dto/post.dto'
+import { createPostDTO, updatePostDTO, userPostsDTO } from './dto/post.dto'
 import { Post as PostInterface } from './interfaces/post.interface';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorators/auth.decorator';
@@ -8,12 +8,14 @@ import { AppResourses, AppRole } from 'src/app.roles';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
+import { UserService } from 'src/user/user.service';
 
 @ApiTags('Posts')
 @Controller('post')
 export class PostController {
     constructor(
         private postService: PostService,
+        private userService: UserService,
         @InjectRolesBuilder()
         private rolesBuilder: RolesBuilder
     ) { }
@@ -21,6 +23,17 @@ export class PostController {
     @Get()
     async getAll() {
         return await this.postService.getAll()
+    }
+
+    @Get('/userPosts/:userId')
+    async getUserPosts(@Param('userId') userId: string) {
+        const user = await this.userService.getUser(userId)
+        if (!user) {
+            throw new NotFoundException()
+        }
+
+        return await this.postService.findByAuthorId(userId)
+
     }
 
     @Get('/:id')

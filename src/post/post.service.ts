@@ -6,13 +6,14 @@ import { Post } from './interfaces/post.interface'
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import validateObjectId from 'src/common/utils/objectIdValidator';
+import { async } from 'rxjs';
 
 @Injectable()
 export class PostService {
     constructor(@InjectModel('Post') private readonly postModel: Model<Post>) { }
 
     getAll = async (): Promise<Post[]> => {
-        const data = await this.postModel.find().populate('author').sort({createdAt: 'desc'})
+        const data = await this.postModel.find().populate('author').sort({ createdAt: 'desc' })
         return data
     }
 
@@ -36,6 +37,12 @@ export class PostService {
         validateObjectId(id, 'Invalid post id')
         const respuesta = await this.postModel.findById(id).populate('author', 'profilePicture _id name surname')
             .orFail(() => new NotFoundException('Post not found'))
+        return respuesta
+    }
+
+    findByAuthorId = async (authorId: string) => {
+        const respuesta = await this.postModel.find({ author: authorId }).sort({ createdAt: 'desc' })
+            .orFail(() => new NotFoundException('No posts'))
         return respuesta
     }
 
