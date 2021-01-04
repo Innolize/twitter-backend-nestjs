@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { roles } from './app.roles';
 import { CommentModule } from './comment/comment.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CommentModule } from './comment/comment.module';
     PostModule,
     UserModule,
     AuthModule,
-    CommentModule],
+    CommentModule,
+    UploadModule],
 })
 export class AppModule { }
