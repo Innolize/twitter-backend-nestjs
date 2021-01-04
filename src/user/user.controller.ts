@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Res, ServiceUnavailableException, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User } from '../common/decorators/user.decorator';
@@ -8,7 +8,9 @@ import { Auth } from 'src/common/decorators/auth.decorator';
 import { editUserDTO } from './dto/editUser.dto';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
 import { AppResourses } from 'src/app.roles';
-import { Response } from 'express';
+import { Response, Express } from 'express';
+import { UploadService } from 'src/upload/upload.service';
+import { ExpressAdapter, FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @Controller('user')
@@ -16,7 +18,8 @@ export class UserController {
     constructor(
         private readonly userService: UserService,
         @InjectRolesBuilder()
-        private readonly rolesBuilder: RolesBuilder
+        private readonly rolesBuilder: RolesBuilder,
+        private readonly uploadService: UploadService
     ) { }
 
     @Post()
@@ -31,6 +34,56 @@ export class UserController {
         }
     }
 
+    @Auth({
+        possession: "own",
+        action: "update",
+        resource: AppResourses.USER
+    })
+    @Put('/:id')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'profile', maxCount: 1 }, { name: 'cover', maxCount: 1 }]))
+    async editUser(
+        @UploadedFiles() files,
+        @User() user: UserInterface,
+        @Param('id') id: string,
+        @Body() dto: editUserDTO,
+    ) {
+        const cover = files.cover?.[0]
+        const profile = files.profile?.[0]
+
+        if (profile) {
+            try {
+
+                const uploadedImageUrl = await this.uploadService.uploadProfileImage(profile)
+                dto.profilePicture = uploadedImageUrl
+            } catch (err) {
+                throw new ServiceUnavailableException('error uploading image')
+            }
+        } else {
+            //Previene intentos maliciosos en propiedades del dto
+            delete dto.profilePicture
+        }
+        if (cover) {
+            try {
+                const uploadedImageUrl = await this.uploadService.uploadProfileImage(cover)
+                dto.cover = uploadedImageUrl
+            } catch (err) {
+                throw new ServiceUnavailableException('error uploading image')
+            }
+        } else {
+            //Previene intentos maliciosos en propiedades del dto
+            delete dto.cover
+        }
+
+        let result: any
+        if (this.rolesBuilder.can(user.roles).updateAny(AppResourses.USER).granted) {
+            //ADMIN
+            result = await this.userService.editUser(id, dto)
+        } else {
+            //AUTHOR
+            result = await this.userService.editUser(id, dto, user)
+        }
+        return result
+    }
 
     @Get()
     async getUsers(): Promise<UserInterface[]> {
@@ -44,30 +97,6 @@ export class UserController {
             throw new NotFoundException()
         }
         return selectedUser
-    }
-
-    @Auth({
-        possession: "own",
-        action: "update",
-        resource: AppResourses.USER
-    })
-    @Put('/:id')
-    async editUser(
-        @Param('id') id: string,
-        @Body() dto: editUserDTO,
-        @User() user: UserInterface
-    ) {
-        let result: any
-        if (this.rolesBuilder.can(user.roles).updateAny(AppResourses.USER).granted) {
-            //ADMIN
-            result = await this.userService.editUser(id, dto)
-        } else {
-            //AUTHOR
-            result = await this.userService.editUser(id, dto, user)
-        }
-
-
-        return result
     }
 
     @Auth({

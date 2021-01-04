@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { roles } from './app.roles';
 import { CommentModule } from './comment/comment.module';
 import { UploadModule } from './upload/upload.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 @Module({
   imports: [
@@ -18,6 +20,13 @@ import { UploadModule } from './upload/upload.module';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('DATABASE'),
         useFindAndModify: false
+      }),
+      inject: [ConfigService]
+    }),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        storage: memoryStorage
       }),
       inject: [ConfigService]
     }),

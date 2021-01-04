@@ -13,14 +13,20 @@ export class User {
     surname: string
 
     @Prop({ default: null })
+    bio: string
+
+    @Prop({ default: null })
     profilePicture: string
+
+    @Prop({ default: null })
+    cover: string
 
     @Prop({ required: true })
     email: string
 
     @Prop({ required: true, select: false })
     password: string
-    
+
     @Prop({ required: true, default: [AppRole.AUTHOR] })
     roles: string[]
 }
