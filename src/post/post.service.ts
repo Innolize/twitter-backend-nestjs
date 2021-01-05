@@ -59,4 +59,15 @@ export class PostService {
         }
         return await this.postModel.deleteOne({ '_id': id })
     }
+
+    likePost = async (postId: string, userId: string): Promise<Boolean> => {
+        await this.postModel.findByIdAndUpdate(postId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } })
+        return true
+    }
+
+    dislikePost = async (postId: string, userId: string): Promise<Boolean> => {
+        await this.postModel.findByIdAndUpdate(postId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } })
+        return false
+    }
+
 }

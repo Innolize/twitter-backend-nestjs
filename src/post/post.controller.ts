@@ -94,4 +94,22 @@ export class PostController {
         }
         return result
     }
+
+    @Auth()
+    @Post('/like/:postId')
+    async likePost(
+        @Param('postId') postId: string,
+        @User() user: UserInterface
+    ) {
+        const userId = user._id
+        const response = await this.postService.findById(postId)
+        if (response.likesArr.includes(userId)) {
+            await this.postService.dislikePost(postId, userId)
+            console.log("quita like")
+        } else {
+            await this.postService.likePost(postId, userId)
+            console.log("da like")
+        }
+    }
+
 }
