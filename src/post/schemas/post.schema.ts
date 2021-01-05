@@ -9,6 +9,18 @@ export class Post {
 
     @Prop({ required: true })
     message: string
+
+    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
+    likesArr: User[]
+
+    @Prop({ default: 0 })
+    likesNumb: number
+
+    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Comments' })
+    commentsArr: Comment[]
+
+    @Prop({ default: 0 })
+    commentsNumb: number
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post)
