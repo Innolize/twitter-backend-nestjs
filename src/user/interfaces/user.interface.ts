@@ -8,6 +8,7 @@ enum enumRoles {
 export interface UserInterface extends Document {
     name: string
     surname: string
+    cover: string
     profilePicture: string
     email: string
     password: string

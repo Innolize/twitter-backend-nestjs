@@ -11,6 +11,7 @@ import { AppResourses } from 'src/app.roles';
 import { Response, Express } from 'express';
 import { UploadService } from 'src/upload/upload.service';
 import { ExpressAdapter, FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { EditUserFiles } from './dto/editUserFiles';
 
 @ApiTags('Users')
 @Controller('user')
@@ -40,9 +41,11 @@ export class UserController {
         resource: AppResourses.USER
     })
     @Put('/:id')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'profile', maxCount: 1 }, { name: 'cover', maxCount: 1 }]))
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'profile', maxCount: 1 },
+        { name: 'cover', maxCount: 1 }]))
     async editUser(
-        @UploadedFiles() files,
+        @UploadedFiles() files: EditUserFiles,
         @User() user: UserInterface,
         @Param('id') id: string,
         @Body() dto: editUserDTO,
@@ -52,7 +55,6 @@ export class UserController {
 
         if (profile) {
             try {
-
                 const uploadedImageUrl = await this.uploadService.uploadProfileImage(profile)
                 dto.profilePicture = uploadedImageUrl
             } catch (err) {
@@ -67,6 +69,7 @@ export class UserController {
                 const uploadedImageUrl = await this.uploadService.uploadProfileImage(cover)
                 dto.cover = uploadedImageUrl
             } catch (err) {
+                profile ? await this.uploadService.removeImage(dto.profilePicture) : null
                 throw new ServiceUnavailableException('error uploading image')
             }
         } else {
@@ -74,15 +77,32 @@ export class UserController {
             delete dto.cover
         }
 
-        let result: any
+        // let result: any
         if (this.rolesBuilder.can(user.roles).updateAny(AppResourses.USER).granted) {
             //ADMIN
-            result = await this.userService.editUser(id, dto)
+            try {
+                let userBeforeEdit = await this.userService.editUser(id, dto)
+                profile && userBeforeEdit.profilePicture ? await this.uploadService.removeImage(userBeforeEdit.profilePicture) : null
+                cover && userBeforeEdit.cover ? await this.uploadService.removeImage(userBeforeEdit.cover) : null
+            } catch (err) {
+                profile ? await this.uploadService.removeImage(dto.profilePicture) : null
+                cover ? await this.uploadService.removeImage(dto.cover) : null
+                console.log(err)
+            }
         } else {
             //AUTHOR
-            result = await this.userService.editUser(id, dto, user)
+            try {
+                let userBeforeEdit = await this.userService.editUser(id, dto, user)
+                profile && userBeforeEdit.profilePicture ? await this.uploadService.removeImage(userBeforeEdit.profilePicture) : null
+                cover && userBeforeEdit.cover ? await this.uploadService.removeImage(userBeforeEdit.cover) : null
+            } catch (err) {
+                profile ? await this.uploadService.removeImage(dto.profilePicture) : null
+                cover ? await this.uploadService.removeImage(dto.cover) : null
+                console.log(err)
+            }
         }
-        return result
+        console.log("success")
+        return
     }
 
     @Get()

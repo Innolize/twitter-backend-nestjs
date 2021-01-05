@@ -48,6 +48,23 @@ export class UploadService {
 
     }
 
+    async removeImage(url: string) {
+
+
+
+        const baseUrl = this.configService.get<string>("AWS_URL_BUCKET")
+        const key = url.replace(baseUrl, "")
+
+        try {
+            await this.s3.deleteObject({ Bucket: "inno-twitt", Key: key }).promise()
+            console.log("imagen borrada")
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
+
+
     validateImage(file: Express.Multer.File) {
         const validImageType = (file.mimetype).indexOf('image') === 0
 

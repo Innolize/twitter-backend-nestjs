@@ -30,13 +30,13 @@ export class UserService {
             //el usuario.
             throw new ForbiddenException('User not found or unauthorized')
         }
-        const userUpdated = await this.userModel.findByIdAndUpdate({ "_id": id }, dto, { new: true })
+        const userUpdated = await this.userModel.findByIdAndUpdate({ "_id": id }, dto)
 
 
         return userUpdated
     }
 
-    delete = async (id: string, user?:UserInterface) => {
+    delete = async (id: string, user?: UserInterface) => {
         if (user && id !== user.id) {
             //Comparo el id del usuario a editar con el usuario logeado antes de buscarlo
             //en la base de datos, por eso esta la posibilidad de que no exista
