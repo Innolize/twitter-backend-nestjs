@@ -104,11 +104,11 @@ export class PostController {
         const userId = user._id
         const response = await this.postService.findById(postId)
         if (response.likesArr.includes(userId)) {
-            await this.postService.dislikePost(postId, userId)
-            console.log("quita like")
+            const like = await this.postService.dislikePost(postId, userId)
+            return like
         } else {
-            await this.postService.likePost(postId, userId)
-            console.log("da like")
+            const like = await this.postService.likePost(postId, userId)
+            return like
         }
     }
 
