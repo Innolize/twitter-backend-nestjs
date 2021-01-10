@@ -16,7 +16,7 @@ export class Post {
     @Prop({ default: 0 })
     likesNumb: number
 
-    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Comments' })
+    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }])
     commentsArr: Comment[]
 
     @Prop({ default: 0 })

@@ -6,7 +6,6 @@ import { Post } from './interfaces/post.interface'
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import validateObjectId from 'src/common/utils/objectIdValidator';
-import { async } from 'rxjs';
 
 @Injectable()
 export class PostService {
@@ -35,7 +34,15 @@ export class PostService {
 
     findById = async (id: string) => {
         validateObjectId(id, 'Invalid post id')
-        const respuesta = await this.postModel.findById(id)
+        const respuesta = await this.postModel.findById(id).populate(
+            {
+                path: "commentsArr",
+                populate: {
+                    path: "authorId",
+                    select: "profilePicture _id name surname"
+                }
+            }
+        )
             .populate('author', 'profilePicture _id name surname')
 
             .orFail(() => new NotFoundException('Post not found'))
@@ -68,6 +75,22 @@ export class PostService {
     dislikePost = async (postId: string, userId: string): Promise<Boolean> => {
         await this.postModel.findByIdAndUpdate(postId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } })
         return false
+    }
+
+    addCommentToPost = async (postId: string, commentId: string) => {
+        try {
+            await this.postModel.findByIdAndUpdate(postId, { $push: { commentsArr: commentId }, $inc: { commentsNumb: 1 } })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    removeCommentToPost = async (postId: string, commentId: string) => {
+        try {
+            await this.postModel.findByIdAndUpdate(postId, { $pull: { commentsArr: commentId }, $inc: { commentsNumb: -1 } })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }

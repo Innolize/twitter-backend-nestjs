@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import validateObjectId from 'src/common/utils/objectIdValidator';
-import { Post } from 'src/post/interfaces/post.interface';
+import { PostService } from 'src/post/post.service';
 import { UserInterface as User, UserInterface } from 'src/user/interfaces/user.interface';
 import { editCommentDTO } from './dto/editComment.dto';
 import { CommentInterface } from './schemas/comment.schema';
@@ -12,8 +12,7 @@ export class CommentService {
     constructor(
         @InjectModel('Comment')
         private readonly commentModel: Model<CommentInterface>,
-        @InjectModel('Post')
-        private readonly postModel: Model<Post>
+        private readonly postService: PostService
     ) { }
 
     allComments = async (postId: string) => {
@@ -31,15 +30,17 @@ export class CommentService {
         return comment
     }
 
-    createComment = async (postId: string, message: string, user: UserInterface) => {
+    createComment = async (postId: string, message: string, user: UserInterface): Promise<CommentInterface> => {
         validateObjectId(postId, 'Invalid post id')
 
         try {
-            const post = await this.postModel.findById(postId)
-                .orFail(() => { throw new NotFoundException('Post not found or unauthorized') })
-            const comment = { authorId: user.id, message, postId }
+            const { id: authorId } = user
+            await this.postService.findById(postId)
+            const comment = { authorId, message, postId }
             const newComment = new this.commentModel(comment)
-            return await newComment.save()
+            const result = await newComment.save()
+            await this.postService.addCommentToPost(postId, result._id)
+            return result
         } catch (err) {
             throw new NotFoundException(err.message)
         }

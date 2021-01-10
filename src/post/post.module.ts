@@ -9,6 +9,7 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]), UserModule],
   controllers: [PostController],
-  providers: [PostService]
+  providers: [PostService],
+  exports: [PostService]
 })
 export class PostModule { }

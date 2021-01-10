@@ -3,16 +3,19 @@ import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
 import { AppResourses } from 'src/app.roles';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
+import { PostService } from 'src/post/post.service';
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import { CommentService } from './comment.service';
 import { findByPostDTO } from './dto/commentPost.dto';
 import { createCommentDTO as CreateDTO } from './dto/createComment.dto'
 import { editCommentDTO } from './dto/editComment.dto'
+import { CommentInterface } from './schemas/comment.schema';
 
 @Controller('comment')
 export class CommentController {
     constructor(
         private readonly commentService: CommentService,
+        private readonly postService: PostService,
         @InjectRolesBuilder()
         private readonly rolesbuilder: RolesBuilder
     ) { }
@@ -39,7 +42,15 @@ export class CommentController {
             @Body() dto: CreateDTO,
             @User() user: UserInterface
         ) {
-        return await this.commentService.createComment(dto.postId, dto.message, user)
+
+        let response: CommentInterface
+        try {
+            response = await this.commentService.createComment(dto.postId, dto.message, user)
+            console.log(response)
+        } catch (error) {
+            console.log(error)
+        }
+        return response
     }
 
     @Auth({
