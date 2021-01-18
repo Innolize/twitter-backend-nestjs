@@ -10,7 +10,7 @@ import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
 import { AppResourses } from 'src/app.roles';
 import { Response, Express } from 'express';
 import { UploadService } from 'src/upload/upload.service';
-import { ExpressAdapter, FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { EditUserFiles } from './dto/editUserFiles';
 
 @ApiTags('Users')
@@ -50,6 +50,7 @@ export class UserController {
         @Param('id') id: string,
         @Body() dto: editUserDTO,
     ) {
+        console.log('usuario entro a editar')
         const cover = files.cover?.[0]
         const profile = files.profile?.[0]
 
@@ -77,13 +78,14 @@ export class UserController {
             delete dto.cover
         }
 
-        // let result: any
+        let result: UserInterface
         if (this.rolesBuilder.can(user.roles).updateAny(AppResourses.USER).granted) {
             //ADMIN
             try {
                 let userBeforeEdit = await this.userService.editUser(id, dto)
                 profile && userBeforeEdit.profilePicture ? await this.uploadService.removeImage(userBeforeEdit.profilePicture) : null
                 cover && userBeforeEdit.cover ? await this.uploadService.removeImage(userBeforeEdit.cover) : null
+                result = await this.userService.getUser(id)
             } catch (err) {
                 profile ? await this.uploadService.removeImage(dto.profilePicture) : null
                 cover ? await this.uploadService.removeImage(dto.cover) : null
@@ -95,14 +97,15 @@ export class UserController {
                 let userBeforeEdit = await this.userService.editUser(id, dto, user)
                 profile && userBeforeEdit.profilePicture ? await this.uploadService.removeImage(userBeforeEdit.profilePicture) : null
                 cover && userBeforeEdit.cover ? await this.uploadService.removeImage(userBeforeEdit.cover) : null
+                result = await this.userService.getUser(id)
             } catch (err) {
                 profile ? await this.uploadService.removeImage(dto.profilePicture) : null
                 cover ? await this.uploadService.removeImage(dto.cover) : null
                 console.log(err)
             }
         }
-        console.log("success")
-        return
+        console.log(result)
+        return result
     }
 
     @Get()

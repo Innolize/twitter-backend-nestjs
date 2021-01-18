@@ -11,7 +11,7 @@ export class Comment {
     postId: string
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    authorId: string
+    author: string
 
     @Prop({ required: true })
     message: string

@@ -11,6 +11,7 @@ import { CommentModule } from './comment/comment.module';
 import { UploadModule } from './upload/upload.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
@@ -35,6 +36,6 @@ import { memoryStorage } from 'multer';
     UserModule,
     AuthModule,
     CommentModule,
-    UploadModule],
+    UploadModule]
 })
 export class AppModule { }

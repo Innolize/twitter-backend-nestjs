@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
+import { AppGateway } from 'src/app.gateway';
 import { AppResourses } from 'src/app.roles';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
@@ -17,7 +18,8 @@ export class CommentController {
         private readonly commentService: CommentService,
         private readonly postService: PostService,
         @InjectRolesBuilder()
-        private readonly rolesbuilder: RolesBuilder
+        private readonly rolesbuilder: RolesBuilder,
+        private readonly gateway: AppGateway
     ) { }
 
     @Get('/post/:id')
@@ -42,11 +44,11 @@ export class CommentController {
             @Body() dto: CreateDTO,
             @User() user: UserInterface
         ) {
-
+        console.log(user)
         let response: CommentInterface
         try {
             response = await this.commentService.createComment(dto.postId, dto.message, user)
-            console.log(response)
+            this.gateway.newComment(dto.postId, response)
         } catch (error) {
             console.log(error)
         }

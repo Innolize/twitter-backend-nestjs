@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AppGateway } from 'src/app.gateway';
 import { PostModule } from 'src/post/post.module';
 import { PostService } from 'src/post/post.service';
 import { PostSchema } from 'src/post/schemas/post.schema';
@@ -12,6 +13,7 @@ import { CommentSchema } from './schemas/comment.schema'
     { name: 'Comment', schema: CommentSchema }]),
     PostModule],
   controllers: [CommentController],
-  providers: [CommentService]
+  providers: [CommentService, AppGateway],
+  exports: [AppGateway]
 })
 export class CommentModule { }

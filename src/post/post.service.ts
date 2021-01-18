@@ -9,7 +9,10 @@ import validateObjectId from 'src/common/utils/objectIdValidator';
 
 @Injectable()
 export class PostService {
-    constructor(@InjectModel('Post') private readonly postModel: Model<Post>) { }
+    constructor(
+        @InjectModel('Post') private readonly postModel: Model<Post>,
+
+    ) { }
 
     getAll = async (): Promise<Post[]> => {
         const data = await this.postModel.find().populate('author').sort({ createdAt: 'desc' })
@@ -18,7 +21,8 @@ export class PostService {
 
     create = async (post: createPostDTO, user: UserInterface): Promise<Post> => {
         const newPost = new this.postModel({ ...post, author: user.id })
-        return await newPost.save()
+        const savedPost = await newPost.save()
+        return savedPost
     }
 
     updatePost = async (id: string, post: updatePostDTO, user?: UserInterface): Promise<Post> => {
@@ -38,7 +42,7 @@ export class PostService {
             {
                 path: "commentsArr",
                 populate: {
-                    path: "authorId",
+                    path: "author",
                     select: "profilePicture _id name surname"
                 }
             }

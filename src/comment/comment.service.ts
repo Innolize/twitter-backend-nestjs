@@ -34,11 +34,13 @@ export class CommentService {
         validateObjectId(postId, 'Invalid post id')
 
         try {
-            const { id: authorId } = user
+            const { id: author } = user
             await this.postService.findById(postId)
-            const comment = { authorId, message, postId }
+            const comment = { author, message, postId }
             const newComment = new this.commentModel(comment)
-            const result = await newComment.save()
+            let result = await newComment.save()
+            result = await result.populate('author', 'profilePicture _id name surname').execPopulate()
+            console.log(result)
             await this.postService.addCommentToPost(postId, result._id)
             return result
         } catch (err) {
@@ -51,7 +53,7 @@ export class CommentService {
 
         const comment = await this.getSingleComment(commentId)
         console.log(comment)
-        if (user && comment.authorId.toString() !== user.id) {
+        if (user && comment.author.toString() !== user.id) {
             throw new NotFoundException('Comment not found or unauthorized')
         }
         return await this.commentModel.findByIdAndUpdate(commentId, message, { new: true })
@@ -61,7 +63,7 @@ export class CommentService {
         validateObjectId(commentId, 'Invalid comment id')
 
         const comment = await this.getSingleComment(commentId)
-        if (user && comment.authorId.toString() !== user.id) {
+        if (user && comment.author.toString() !== user.id) {
             throw new NotFoundException('Comment not found or unauthorized')
         }
         return await this.commentModel.findByIdAndDelete(commentId)

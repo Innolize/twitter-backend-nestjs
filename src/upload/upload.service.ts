@@ -43,6 +43,7 @@ export class UploadService {
             console.log("cover: ", imageUrl)
             return imageUrl
         } catch (err) {
+            console.log('aca esta el error')
             return err
         }
 
