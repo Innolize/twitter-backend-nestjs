@@ -21,7 +21,8 @@ export class PostService {
 
     create = async (post: createPostDTO, user: UserInterface): Promise<Post> => {
         const newPost = new this.postModel({ ...post, author: user.id })
-        const savedPost = await newPost.save()
+        let savedPost = await newPost.save()
+        savedPost = await savedPost.populate('author').execPopulate()
         return savedPost
     }
 

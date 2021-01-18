@@ -9,6 +9,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
 import { UserService } from 'src/user/user.service';
+import { SocketService } from 'src/socket/socket.service';
 
 @ApiTags('Posts')
 @Controller('post')
@@ -17,7 +18,8 @@ export class PostController {
         private postService: PostService,
         private userService: UserService,
         @InjectRolesBuilder()
-        private rolesBuilder: RolesBuilder
+        private rolesBuilder: RolesBuilder,
+        private socketService: SocketService
     ) { }
 
     @Get()
@@ -49,7 +51,12 @@ export class PostController {
     @Post('/create')
     async createPost(@Body() dto: createPostDTO, @User() user: UserInterface): Promise<PostInterface> {
         console.log(user)
-        return await this.postService.create(dto, user)
+        const newPost = await this.postService.create(dto, user)
+        console.log(newPost)
+        this.socketService.newPost(newPost)
+        return newPost
+
+
     }
 
     @Auth({
