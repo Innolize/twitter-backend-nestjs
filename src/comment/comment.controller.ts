@@ -5,6 +5,7 @@ import { AppResourses } from 'src/app.roles';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { PostService } from 'src/post/post.service';
+import { SocketService } from 'src/socket/socket.service';
 import { UserInterface } from 'src/user/interfaces/user.interface';
 import { CommentService } from './comment.service';
 import { findByPostDTO } from './dto/commentPost.dto';
@@ -19,7 +20,7 @@ export class CommentController {
         private readonly postService: PostService,
         @InjectRolesBuilder()
         private readonly rolesbuilder: RolesBuilder,
-        private readonly gateway: AppGateway
+        private readonly socketService: SocketService
     ) { }
 
     @Get('/post/:id')
@@ -48,7 +49,7 @@ export class CommentController {
         let response: CommentInterface
         try {
             response = await this.commentService.createComment(dto.postId, dto.message, user)
-            this.gateway.newComment(dto.postId, response)
+            this.socketService.newComment(dto.postId, response)
         } catch (error) {
             console.log(error)
         }

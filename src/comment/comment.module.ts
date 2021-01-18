@@ -11,9 +11,9 @@ import { CommentSchema } from './schemas/comment.schema'
 @Module({
   imports: [MongooseModule.forFeature([
     { name: 'Comment', schema: CommentSchema }]),
-    PostModule],
+    PostModule,
+  ],
   controllers: [CommentController],
-  providers: [CommentService, AppGateway],
-  exports: [AppGateway]
+  providers: [CommentService],
 })
 export class CommentModule { }
