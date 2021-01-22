@@ -56,4 +56,9 @@ export class UserService {
         const user = await this.userModel.findOne({ email }).select('+password')
         return user
     }
+
+    getShortenedUser = async (userId: string): Promise<UserInterface> => {
+        const user = await this.userModel.findOne({ _id: userId }).select('name surname profilePicture _id')
+        return user
+    }
 }

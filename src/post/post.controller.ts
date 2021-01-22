@@ -50,9 +50,7 @@ export class PostController {
     })
     @Post('/create')
     async createPost(@Body() dto: createPostDTO, @User() user: UserInterface): Promise<PostInterface> {
-        console.log(user)
         const newPost = await this.postService.create(dto, user)
-        console.log(newPost)
         this.socketService.newPost(newPost)
         return newPost
 
@@ -86,7 +84,7 @@ export class PostController {
         action: "delete",
         resource: AppResourses.POST
     })
-    @Delete('/:id')
+    @Delete('/delete/:id')
     async deletePost(
         @Param('id') id: string,
         @User() user: UserInterface

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Res, ServiceUnavailableException, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Res, ServiceUnavailableException, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { UserInterface } from './interfaces/user.interface';
 import { UserService } from './user.service';
 import { User } from '../common/decorators/user.decorator';
@@ -113,6 +113,13 @@ export class UserController {
         return await this.userService.getUsers()
     }
 
+    @Get('/ShortenedUser')
+    async getShortenedUser(@Query('user') userId: string) {
+        console.log(userId)
+        let response = await this.userService.getShortenedUser(userId)
+        return response
+    }
+
     @Get('/:id')
     async getUser(@Param('id') id: string): Promise<UserInterface> {
         const selectedUser = await this.userService.getUser(id)
@@ -131,5 +138,6 @@ export class UserController {
     async deleteUser(@Param('id') id: string) {
         return await this.userService.delete(id)
     }
+
 
 }

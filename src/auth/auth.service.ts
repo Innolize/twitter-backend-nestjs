@@ -34,27 +34,26 @@ export class AuthService {
     }
 
     async createRefreshToken(id: { sub: string }) {
-        return this.jwtService.sign(id, { secret: this.configService.get<string>('JWT_REFRESH_SECRET') })
+        return this.jwtService.sign(id, { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: this.configService.get<string>('JWT_REFRESH_SECRET_EXPIRE') })
     }
 
     async refreshToken(refreshToken: string) {
         try {
+
             const token = this.jwtService.verify(refreshToken, { secret: this.configService.get<string>('JWT_REFRESH_SECRET') })
             const { sub } = token
             const payload = { sub }
             const access_token = this.jwtService.sign(payload)
             const refresh = this.jwtService.sign(payload, { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: this.configService.get<string>('JWT_REFRESH_SECRET_EXPIRE') })
             const user = await this.userService.getUser(sub)
+
             return {
                 access_token,
                 refresh,
                 user,
             }
         } catch (error) {
-            return {
-                logged: false,
-                message: error.message
-            }
+            throw new Error(error.message)
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
 import * as mongoose from 'mongoose'
+import { CommentSchema } from 'src/comment/schemas/comment.schema'
 import { User } from 'src/user/schemas/user.schema'
 
 @Schema({ timestamps: true })

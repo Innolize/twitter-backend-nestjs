@@ -29,7 +29,7 @@ export class AuthController {
             response.cookie('refresh', refresh)
             return { user, access_token }
         } catch (err) {
-
+            console.log(err)
         }
     }
 
@@ -50,7 +50,8 @@ export class AuthController {
                 logged: true
             }
         } catch (err) {
-            response.clearCookie('refresh')
+            // response.clearCookie('refresh')
+            console.log(err.message)
             throw new BadRequestException(err.message)
         }
 
