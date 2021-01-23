@@ -81,7 +81,7 @@ export class CommentController {
         action: 'delete',
         resource: AppResourses.COMMENT
     })
-    @Delete('/:id')
+    @Delete('/delete/:id')
     async deleteComment
         (
             @Param('id') id: string,
@@ -95,5 +95,28 @@ export class CommentController {
             return await this.commentService.deleteComment(id, user)
         }
 
+    }
+
+    @Auth()
+    @Post('/like/:commentId')
+    async likePost(
+        @Param('commentId') commentId: string,
+        @User() user: UserInterface
+    ) {
+
+        const userId = user._id
+        const response = await this.commentService.getSingleComment(commentId)
+
+        if (response.likesArr.includes(userId)) {
+
+            const like = await this.commentService.dislikeComment(commentId, userId)
+            console.log(like)
+            return like
+        } else {
+
+            const like = await this.commentService.likeComment(commentId, userId)
+            console.log(like)
+            return like
+        }
     }
 }

@@ -17,7 +17,10 @@ export class Comment {
     message: string
 
     @Prop({ default: [] })
-    likes: string[]
+    likesArr: string[]
+
+    @Prop({ default: 0 })
+    likesNumb: number
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)

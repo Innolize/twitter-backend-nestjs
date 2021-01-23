@@ -23,7 +23,7 @@ export class CommentService {
 
     getSingleComment = async (commentId: string) => {
         validateObjectId(commentId, 'invalid comment id')
-
+        console.log("linea 26", commentId)
         const comment = await this.commentModel.findById(commentId)
             .orFail(() => { throw new NotFoundException('Comment not found or unauthorized') })
 
@@ -60,13 +60,29 @@ export class CommentService {
     }
 
     deleteComment = async (commentId: string, user?: UserInterface) => {
+
         validateObjectId(commentId, 'Invalid comment id')
 
         const comment = await this.getSingleComment(commentId)
+        console.log(comment)
         if (user && comment.author.toString() !== user.id) {
             throw new NotFoundException('Comment not found or unauthorized')
         }
-        return await this.commentModel.findByIdAndDelete(commentId)
+        await this.postService.removeCommentToPost(comment.postId, comment.id)
+        await this.commentModel.findByIdAndDelete(comment.id)
+        return true
+    }
+
+    likeComment = async (commentId: string, userId: string): Promise<Boolean> => {
+        const response = await this.commentModel.findByIdAndUpdate(commentId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } })
+        console.log(response)
+        return true
+    }
+
+    dislikeComment = async (commentId: string, userId: string): Promise<Boolean> => {
+        const response = await this.commentModel.findByIdAndUpdate(commentId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } })
+        console.log(response)
+        return false
     }
 
 }
