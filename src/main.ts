@@ -17,6 +17,6 @@ async function bootstrap() {
   swaggerInit(app)
 
   const configService = app.get<ConfigService>('ConfigService')
-  await app.listen(configService.get<string>('PORT') || 8000);
+  await app.listen(configService.get<string>('PORT') || 80);
 }
 bootstrap();

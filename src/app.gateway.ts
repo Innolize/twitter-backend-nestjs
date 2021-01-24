@@ -3,7 +3,7 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnectio
 import { Socket, Server } from 'socket.io'
 import { SocketService } from './socket/socket.service';
 
-@WebSocketGateway(4001, { transports: ['websocket'] })
+@WebSocketGateway(80, { transports: ['websocket'] })
 @Injectable()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private socketService: SocketService) { }
