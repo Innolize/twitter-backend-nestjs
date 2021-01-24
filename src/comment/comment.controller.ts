@@ -90,9 +90,13 @@ export class CommentController {
 
         if (this.rolesbuilder.can(user.roles).deleteAny(AppResourses.COMMENT).granted) {
             //ADMIN
-            return await this.commentService.deleteComment(id)
+            const commentDeleted = await this.commentService.deleteComment(id)
+            this.socketService.removeComment(commentDeleted.postId, commentDeleted)
+            return commentDeleted
         } else {
-            return await this.commentService.deleteComment(id, user)
+            const commentDeleted = await this.commentService.deleteComment(id, user)
+            this.socketService.removeComment(commentDeleted.postId, commentDeleted)
+            return commentDeleted
         }
 
     }
@@ -108,15 +112,15 @@ export class CommentController {
         const response = await this.commentService.getSingleComment(commentId)
 
         if (response.likesArr.includes(userId)) {
-
-            const like = await this.commentService.dislikeComment(commentId, userId)
-            console.log(like)
-            return like
+            const updatedComment = await this.commentService.dislikeComment(commentId, userId)
+            console.log(updatedComment)
+            this.socketService.updateComment(updatedComment.postId, updatedComment)
+            return updatedComment
         } else {
-
-            const like = await this.commentService.likeComment(commentId, userId)
-            console.log(like)
-            return like
+            const updatedComment = await this.commentService.likeComment(commentId, userId)
+            this.socketService.updateComment(updatedComment.postId, updatedComment)
+            console.log(updatedComment)
+            return updatedComment
         }
     }
 }

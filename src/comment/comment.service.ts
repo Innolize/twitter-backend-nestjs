@@ -5,18 +5,19 @@ import validateObjectId from 'src/common/utils/objectIdValidator';
 import { PostService } from 'src/post/post.service';
 import { UserInterface as User, UserInterface } from 'src/user/interfaces/user.interface';
 import { editCommentDTO } from './dto/editComment.dto';
+import { CommentAuthor } from './interfaces/CommentAuthor';
 import { CommentInterface } from './schemas/comment.schema';
 
 @Injectable()
 export class CommentService {
     constructor(
         @InjectModel('Comment')
-        private readonly commentModel: Model<CommentInterface>,
+        private readonly commentModel: Model<CommentInterface | CommentAuthor>,
         private readonly postService: PostService
     ) { }
 
     allComments = async (postId: string) => {
-        const response = await this.commentModel.find({ postId }).populate('post').sort("asc")
+        const response = await this.commentModel.find({ postId }).populate('author', 'profilePicture _id name surname').sort("asc")
         console.log(response)
         return response
     }
@@ -64,25 +65,23 @@ export class CommentService {
         validateObjectId(commentId, 'Invalid comment id')
 
         const comment = await this.getSingleComment(commentId)
-        console.log(comment)
         if (user && comment.author.toString() !== user.id) {
             throw new NotFoundException('Comment not found or unauthorized')
         }
         await this.postService.removeCommentToPost(comment.postId, comment.id)
-        await this.commentModel.findByIdAndDelete(comment.id)
-        return true
+        const commentDeleted = await this.commentModel.findByIdAndDelete(comment.id)
+        return commentDeleted
     }
 
-    likeComment = async (commentId: string, userId: string): Promise<Boolean> => {
-        const response = await this.commentModel.findByIdAndUpdate(commentId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } })
-        console.log(response)
-        return true
+    likeComment = async (commentId: string, userId: string): Promise<CommentAuthor> => {
+        const updatedComment = await this.commentModel.findByIdAndUpdate(commentId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } }, { new: true }).populate('author', 'profilePicture _id name surname') as CommentAuthor
+        return updatedComment
     }
 
-    dislikeComment = async (commentId: string, userId: string): Promise<Boolean> => {
-        const response = await this.commentModel.findByIdAndUpdate(commentId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } })
-        console.log(response)
-        return false
+    dislikeComment = async (commentId: string, userId: string): Promise<CommentAuthor> => {
+        const updatedComment = await this.commentModel.findByIdAndUpdate(commentId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } }, { new: true }).populate('author', 'profilePicture _id name surname') as CommentAuthor
+        console.log(updatedComment)
+        return updatedComment
     }
 
 }
