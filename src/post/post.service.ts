@@ -69,8 +69,8 @@ export class PostService {
         if (!post || !(user && (post.author).toString() === user.id)) {
             throw new ForbiddenException('Post not found or unauthorized')
         }
-        await this.postModel.deleteOne({ '_id': id })
-        return true
+        const response = await this.postModel.findOneAndDelete({ '_id': id })
+        return response
     }
 
     likePost = async (postId: string, userId: string): Promise<Boolean> => {

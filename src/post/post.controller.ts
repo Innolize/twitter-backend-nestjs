@@ -92,10 +92,12 @@ export class PostController {
         let result: any
         if (this.rolesBuilder.can(user.roles).deleteAny(AppResourses.POST).granted) {
             //ADMIN
-            result = this.postService.deletePost(id)
+            result = await this.postService.deletePost(id)
         } else {
             //AUTHOR
-            result = this.postService.deletePost(id, user)
+            result = await this.postService.deletePost(id, user)
+            this.socketService.removePost(result)
+            console.log(result)
         }
         return result
     }

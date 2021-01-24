@@ -9,9 +9,13 @@ export class SocketService {
 
     //Post
 
-    newPost(data: Post) {
+    newPost(post: Post) {
         console.log('nuevo Post')
-        this.socket.to('general').emit('newPost', data)
+        this.socket.to('general').emit('newPost', post)
+    }
+
+    removePost(post: Post) {
+        this.socket.to('general').emit('removePost', post)
     }
 
     //Comments
