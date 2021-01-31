@@ -11,8 +11,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
+    origin: "https://inno-twitter.netlify.app",
     credentials: true,
-    origin: "http://localhost:3000"
   });
   swaggerInit(app)
 

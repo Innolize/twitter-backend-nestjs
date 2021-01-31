@@ -26,6 +26,7 @@ export class AuthService {
         const payload = { sub: _id }
         const access_token = this.jwtService.sign(payload)
         const refresh = await this.createRefreshToken(payload)
+        console.log(this.configService.get<string>('JWT_REFRESH_SECRET'))
         return {
             user,
             access_token,

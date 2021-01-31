@@ -1,36 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, MessageBody, ConnectedSocket } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io'
-import { SocketService } from './socket/socket.service';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayInit,
+  OnGatewayDisconnect,
+  MessageBody,
+  ConnectedSocket,
+} from "@nestjs/websockets";
+import { Socket, Server } from "socket.io";
+import { SocketService } from "./socket/socket.service";
 
-@WebSocketGateway(4001, { transports: ['websocket'] })
+@WebSocketGateway({ transports: ["websocket"] })
 @Injectable()
-export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private socketService: SocketService) { }
+export class AppGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  constructor(
+    private socketService: SocketService,
+    private configService: ConfigService
+  ) {}
 
-  private count: number = 0
+  private count = 0;
 
-  @WebSocketServer() server: Server
+  @WebSocketServer() server: Server;
 
   afterInit(server: Server) {
-    this.socketService.socket = server
+    this.socketService.socket = server;
   }
 
-  handleConnection(client: Socket) {
-    this.count += 1
-    console.log(`connected: ${this.count}  users`)
-    this.server.emit('msgToClient', "conectado con exito!");
+  handleConnection() {
+    this.count += 1;
+    console.log(`connected: ${this.count}  users`);
+    this.server.emit("msgToClient", "conectado con exito!");
   }
 
   handleDisconnect() {
-    this.count -= 1
-    console.log(`connected: ${this.count}  users`)
+    this.count -= 1;
+    console.log(`connected: ${this.count}  users`);
   }
 
-
-
-  @SubscribeMessage('joinRoom')
+  @SubscribeMessage("joinRoom")
   joinRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket) {
-    client.join(room)
+    client.join(room);
   }
 }

@@ -26,7 +26,10 @@ export class AuthController {
             console.log(userData)
             const { refresh, user, access_token } = userData
             console.log(refresh)
-            response.cookie('refresh', refresh)
+            response.cookie('refresh', refresh, {
+                httpOnly: true,
+            })
+            console.log(response.cookie)
             return { user, access_token }
         } catch (err) {
             console.log(err)
