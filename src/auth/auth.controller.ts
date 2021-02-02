@@ -27,6 +27,10 @@ export class AuthController {
             const { refresh, user, access_token } = userData
             console.log(refresh)
             response.cookie('refresh', refresh, {
+                expires: new Date(Date.now() + (2 * 60 * 60 * 1000)),
+                // 2 * 60 * 60 * 1000 = 2hs en milisegundos
+                secure: true,
+                sameSite: "none",
                 httpOnly: true,
             })
             console.log(response.cookie)
