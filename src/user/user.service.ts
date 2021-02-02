@@ -61,4 +61,13 @@ export class UserService {
         const user = await this.userModel.findOne({ _id: userId }).select('name surname profilePicture _id')
         return user
     }
+    followUser = async (userId: string, followId: string) => {
+        const response = await this.userModel.findByIdAndUpdate(userId, { $push: { followersArr: userId }, $inc: { followersNumb: 1 } })
+        return response
+    }
+
+    unfollowUser = async (userId: string, followId: string) => {
+        const response = await this.userModel.findByIdAndUpdate(userId, { $pull: { followersArr: userId }, $inc: { followersNumb: -1 } })
+        return response
+    }
 }

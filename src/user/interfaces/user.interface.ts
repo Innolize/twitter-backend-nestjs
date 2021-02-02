@@ -13,4 +13,6 @@ export interface UserInterface extends Document {
     email: string
     password: string
     roles: enumRoles[]
+    followersArr: string[]
+    followersNumb: number
 }

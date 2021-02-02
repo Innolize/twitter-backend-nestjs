@@ -139,5 +139,25 @@ export class UserController {
         return await this.userService.delete(id)
     }
 
+    @Auth({
+        possession: "own",
+        action: "update",
+        resource: AppResourses.USER
+    })
+    @Post('/follow/:id')
+    async followUser(
+        @User() user: UserInterface,
+        @Param('id') followId: string
+    ) {
+        const userId = user._id
+        if (user.followersArr.includes(user._id)) {
+            const like = await this.userService.unfollowUser(user._id, followId)
+            return like
+        } else {
+            const like = await this.userService.followUser(user._id, followId)
+
+            return like
+        }
+    }
 
 }

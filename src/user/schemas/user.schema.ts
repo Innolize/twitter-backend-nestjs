@@ -29,6 +29,12 @@ export class User {
 
     @Prop({ required: true, default: [AppRole.AUTHOR] })
     roles: string[]
+
+    @Prop({default: []})
+    followersArr: User[]
+
+    @Prop({default: 0})
+    followersNumb: number
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
