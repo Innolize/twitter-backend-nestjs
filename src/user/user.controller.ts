@@ -120,6 +120,16 @@ export class UserController {
         return response
     }
 
+    @Auth()
+    @Get('/follow')
+    async obtainFollowsUser(@User() user: UserInterface) {
+        const { followersArr, followersNumb } = user
+        console.log("array: ", followersArr)
+        const response = await this.userService.getMultipleShortenedUser(followersArr)
+        console.log(response)
+        return response
+    }
+
     @Get('/:id')
     async getUser(@Param('id') id: string): Promise<UserInterface> {
         const selectedUser = await this.userService.getUser(id)
@@ -150,14 +160,15 @@ export class UserController {
         @Param('id') followId: string
     ) {
         const userId = user._id
-        if (user.followersArr.includes(user._id)) {
-            const like = await this.userService.unfollowUser(user._id, followId)
+        if (user.followersArr.includes(followId)) {
+            const like = await this.userService.unfollowUser(userId, followId)
             return like
         } else {
-            const like = await this.userService.followUser(user._id, followId)
-
+            const like = await this.userService.followUser(userId, followId)
             return like
         }
     }
+
+
 
 }

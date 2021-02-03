@@ -38,6 +38,13 @@ export class PostController {
 
     }
 
+    @Auth()
+    @Get('/follows')
+    async obtainFollowsPost(@User() user: UserInterface) {
+        return await this.postService.findByFollowPost(user.followersArr)
+
+    }
+
     @Get('/:id')
     async getOne(@Param("id") id: string): Promise<PostInterface> {
         return await this.postService.findById(id)
@@ -118,5 +125,6 @@ export class PostController {
             return like
         }
     }
+
 
 }

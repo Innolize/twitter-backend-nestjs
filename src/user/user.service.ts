@@ -61,13 +61,21 @@ export class UserService {
         const user = await this.userModel.findOne({ _id: userId }).select('name surname profilePicture _id')
         return user
     }
+
+    getMultipleShortenedUser = async (userIdArray: string[]): Promise<UserInterface[]> => {
+        const user = await this.userModel.find({ _id: { "$in": userIdArray } }).select('name surname profilePicture _id')
+        return user
+    }
+
     followUser = async (userId: string, followId: string) => {
-        const response = await this.userModel.findByIdAndUpdate(userId, { $push: { followersArr: userId }, $inc: { followersNumb: 1 } })
+        const response = await this.userModel.findByIdAndUpdate(userId, { $push: { followersArr: followId }, $inc: { followersNumb: 1 } }, { new: true }).select('followersArr followersNumb')
+        console.log("follow response: ", response)
         return response
     }
 
     unfollowUser = async (userId: string, followId: string) => {
-        const response = await this.userModel.findByIdAndUpdate(userId, { $pull: { followersArr: userId }, $inc: { followersNumb: -1 } })
+        const response = await this.userModel.findByIdAndUpdate(userId, { $pull: { followersArr: followId }, $inc: { followersNumb: -1 } }, { new: true }).select('followersArr followersNumb')
+        console.log("unfollow response: ", response)
         return response
     }
 }

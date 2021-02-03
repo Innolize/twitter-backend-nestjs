@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 
 import { Post } from './interfaces/post.interface'
 import { createPostDTO, updatePostDTO } from './dto/post.dto'
@@ -99,4 +99,8 @@ export class PostService {
         }
     }
 
+    findByFollowPost = async (followArr: string[]) => {
+        const response = await this.postModel.find({ "author": { "$in": followArr } }).populate('author', 'profilePicture _id name surname')
+        return response
+    }
 }
