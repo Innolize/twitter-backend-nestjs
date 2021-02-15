@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { editUserDTO } from './dto/editUser.dto';
 import { createUserDTO } from './dto/createUser.dto';
 import { UserInterface } from './interfaces/user.interface'
+import { async } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,7 @@ export class UserService {
     }
 
     getUsers = async (): Promise<UserInterface[]> => {
-        return await this.userModel.find().select('-password')
+        return await this.userModel.find().sort({createdAt: "desc"}).select('name surname profilePicture _id')
     }
 
     editUser = async (id: string, dto: editUserDTO, user?: UserInterface): Promise<UserInterface> => {
@@ -76,6 +77,12 @@ export class UserService {
     unfollowUser = async (userId: string, followId: string) => {
         const response = await this.userModel.findByIdAndUpdate(userId, { $pull: { followersArr: followId }, $inc: { followersNumb: -1 } }, { new: true }).select('followersArr followersNumb')
         console.log("unfollow response: ", response)
+        return response
+    }
+
+    filterUser = async (param: string) => {
+        const regexParam = new RegExp(param, "i")
+        const response = await this.userModel.find({ $or: [{ name: { $regex: regexParam } }, { surname: { $regex: regexParam } }] }).sort({createdAt: "desc"}).select('name surname profilePicture _id')
         return response
     }
 }

@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator'
+import { IsString, MaxLength, MinLength } from 'class-validator'
 
 export class createCommentDTO {
 
@@ -6,5 +6,7 @@ export class createCommentDTO {
     postId: string
 
     @IsString()
+    @MinLength(4)
+    @MaxLength(140)
     message: string
 }

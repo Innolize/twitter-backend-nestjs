@@ -73,14 +73,16 @@ export class PostService {
         return response
     }
 
-    likePost = async (postId: string, userId: string): Promise<Boolean> => {
-        await this.postModel.findByIdAndUpdate(postId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } })
-        return true
+    likePost = async (postId: string, userId: string): Promise<Post> => {
+        const response = await this.postModel.findByIdAndUpdate(postId, { $push: { likesArr: userId }, $inc: { likesNumb: 1 } }, { new: true }).populate('author', 'profilePicture _id name surname')
+        console.log(response)
+        return response
     }
 
-    dislikePost = async (postId: string, userId: string): Promise<Boolean> => {
-        await this.postModel.findByIdAndUpdate(postId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } })
-        return false
+    dislikePost = async (postId: string, userId: string): Promise<Post> => {
+        const response = await this.postModel.findByIdAndUpdate(postId, { $pull: { likesArr: userId }, $inc: { likesNumb: -1 } }, { new: true }).populate('author', 'profilePicture _id name surname')
+        console.log(response)
+        return response
     }
 
     addCommentToPost = async (postId: string, commentId: string) => {
@@ -100,7 +102,7 @@ export class PostService {
     }
 
     findByFollowPost = async (followArr: string[]) => {
-        const response = await this.postModel.find({ "author": { "$in": followArr } }).populate('author', 'profilePicture _id name surname')
+        const response = await this.postModel.find({ "author": { "$in": followArr } }).populate('author', 'profilePicture _id name surname').sort({ createdAt: 'desc' })
         return response
     }
 }

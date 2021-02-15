@@ -28,7 +28,6 @@ export class UserController {
         let respuesta: any
         try {
             respuesta = await this.userService.createUser(user)
-            res.cookie('access_token', '12345', { httpOnly: true })
             return respuesta
         } catch (e) {
             console.log(e)
@@ -127,6 +126,14 @@ export class UserController {
         console.log("array: ", followersArr)
         const response = await this.userService.getMultipleShortenedUser(followersArr)
         console.log(response)
+        return response
+    }
+
+    @Auth()
+    @Get('/filterUser/:filterParam')
+    async filterUser(@Param('filterParam') param : string){
+        console.log('aca quiero entrar', param)
+        const response = await this.userService.filterUser(param)
         return response
     }
 

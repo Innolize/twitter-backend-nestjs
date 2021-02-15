@@ -50,8 +50,8 @@ export class CommentController {
         try {
             response = await this.commentService.createComment(dto.postId, dto.message, user)
             this.socketService.newComment(dto.postId, response)
-        } catch (error) {
-            console.log(error)
+        } catch (err) {
+            console.log(err)
         }
         return response
     }
@@ -91,11 +91,11 @@ export class CommentController {
         if (this.rolesbuilder.can(user.roles).deleteAny(AppResourses.COMMENT).granted) {
             //ADMIN
             const commentDeleted = await this.commentService.deleteComment(id)
-            this.socketService.removeComment(commentDeleted.postId, commentDeleted)
+            this.socketService.removeCommentArray(commentDeleted.postId, commentDeleted)
             return commentDeleted
         } else {
             const commentDeleted = await this.commentService.deleteComment(id, user)
-            this.socketService.removeComment(commentDeleted.postId, commentDeleted)
+            this.socketService.removeCommentArray(commentDeleted.postId, commentDeleted)
             return commentDeleted
         }
 
@@ -114,11 +114,11 @@ export class CommentController {
         if (response.likesArr.includes(userId)) {
             const updatedComment = await this.commentService.dislikeComment(commentId, userId)
             console.log(updatedComment)
-            this.socketService.updateComment(updatedComment.postId, updatedComment)
+            this.socketService.updateCommentArray(updatedComment.postId, updatedComment)
             return updatedComment
         } else {
             const updatedComment = await this.commentService.likeComment(commentId, userId)
-            this.socketService.updateComment(updatedComment.postId, updatedComment)
+            this.socketService.updateCommentArray(updatedComment.postId, updatedComment)
             console.log(updatedComment)
             return updatedComment
         }
