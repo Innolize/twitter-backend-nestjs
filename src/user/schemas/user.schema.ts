@@ -12,14 +12,14 @@ export class User {
     @Prop({ required: true })
     surname: string
 
-    @Prop({ default: null })
+    @Prop({ default: "" })
     bio: string
 
     @Prop({ default: null })
-    profilePicture: string
+    profilePicture: string | null
 
     @Prop({ default: null })
-    cover: string
+    cover: string | null
 
     @Prop({ required: true })
     email: string

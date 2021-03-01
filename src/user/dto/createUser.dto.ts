@@ -5,13 +5,13 @@ export class createUserDTO {
 
     @ApiProperty()
     @IsString()
-    @MinLength(4)
+    @MinLength(3)
     @MaxLength(15)
     readonly name: string
 
     @ApiProperty()
     @IsString()
-    @MinLength(4)
+    @MinLength(3)
     @MaxLength(15)
     readonly surname: string
 

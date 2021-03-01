@@ -49,7 +49,7 @@ export class UserController {
         @Param('id') id: string,
         @Body() dto: editUserDTO,
     ) {
-        console.log('usuario entro a editar')
+        console.log(dto)
         const cover = files.cover?.[0]
         const profile = files.profile?.[0]
 
@@ -131,7 +131,7 @@ export class UserController {
 
     @Auth()
     @Get('/filterUser/:filterParam')
-    async filterUser(@Param('filterParam') param : string){
+    async filterUser(@Param('filterParam') param: string) {
         console.log('aca quiero entrar', param)
         const response = await this.userService.filterUser(param)
         return response

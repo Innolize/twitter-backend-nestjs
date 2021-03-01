@@ -58,8 +58,6 @@ export class PostService {
         const respuesta = await this.postModel.find({ author: authorId })
             .populate('author', 'profilePicture _id name surname')
             .sort({ createdAt: 'desc' })
-
-            .orFail(() => new NotFoundException('No posts'))
         return respuesta
     }
 

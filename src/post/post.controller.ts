@@ -34,8 +34,12 @@ export class PostController {
             throw new NotFoundException()
         }
 
-        return await this.postService.findByAuthorId(userId)
-
+        try {
+            const response = await this.postService.findByAuthorId(userId)
+            return response
+        } catch (err) {
+            throw new NotFoundException(err.message)
+        }
     }
 
     @Auth()

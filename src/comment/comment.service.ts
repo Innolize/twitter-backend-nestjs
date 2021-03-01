@@ -17,13 +17,14 @@ export class CommentService {
     ) { }
 
     allComments = async (postId: string) => {
+        validateObjectId(postId, 'Invalid comment id')
         const response = await this.commentModel.find({ postId }).populate('author', 'profilePicture _id name surname').sort("asc")
         console.log(response)
         return response
     }
 
     getSingleComment = async (commentId: string) => {
-        validateObjectId(commentId, 'invalid comment id')
+        validateObjectId(commentId, 'Invalid comment id')
         console.log("linea 26", commentId)
         const comment = await this.commentModel.findById(commentId)
             .orFail(() => { throw new NotFoundException('Comment not found or unauthorized') })
